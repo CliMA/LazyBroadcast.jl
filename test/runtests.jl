@@ -3,15 +3,10 @@ julia --project
 using Revise; include(joinpath("test", "runtests.jl"))
 =#
 using Test
-import LazyBroadcast as LB
+using SafeTestsets
 
-a = rand(3, 3)
-b = rand(3, 3)
-
-bce = LB.lazy_broadcasted(:(@. a + b))
-bco = LB.@lazy_broadcasted @. a + b
-
-@testset "lazy_broadcasted" begin
-    @test bce == :(Base.broadcasted(+, a, b))
-    @test bco == Base.broadcasted(+, a, b)
-end
+#! format: off
+@safetestset "expr_code_lowered_single_expression" begin; @time include("expr_code_lowered_single_expression.jl"); end
+@safetestset "expr_restrictions" begin; @time include("expr_restrictions.jl"); end
+@safetestset "lazy_broadcasted" begin; @time include("lazy_broadcasted.jl"); end
+#! format: on

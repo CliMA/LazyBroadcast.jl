@@ -1,0 +1,43 @@
+function materialize_args(expr::Expr)
+    @assert expr.head == :call
+    if expr.args[1] == :(Base.materialize!)
+        return (expr.args[2], expr.args[3])
+    elseif expr.args[1] == :(Base.materialize)
+        return (expr.args[2], expr.args[2])
+    else
+        error("Uncaught edge case.")
+    end
+end
+
+function check_restrictions(expr)
+    s_error = if expr isa QuoteNode
+        "Dangling symbols are not allowed inside"
+    elseif expr.head == :for
+        "Loops are not allowed inside"
+    elseif expr.head == :if
+        "If-statements are not allowed inside"
+    elseif expr.head == :call
+        "Function calls are not allowed inside"
+    elseif expr.head == :(=)
+        "Non-broadcast assignments are not allowed inside"
+    elseif expr.head == :let
+        "Let-blocks are not allowed inside"
+    elseif expr.head == :quote
+        "Quotes are not allowed inside"
+    else
+        ""
+    end
+    isempty(s_error) || error(s_error)
+    if expr.head == :macrocall && expr.args[1] == Symbol("@__dot__")
+    elseif expr.head == :block
+        for arg in expr.args
+            arg isa LineNumberNode && continue
+            arg isa Symbol && continue
+            check_restrictions(arg)
+        end
+    else
+        @show dump(expr)
+        @show dump(expr)
+        error("Uncaught edge case")
+    end
+end
