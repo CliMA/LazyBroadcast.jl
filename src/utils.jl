@@ -16,7 +16,7 @@ function check_restrictions(expr)
         "Loops are not allowed inside"
     elseif expr.head == :if
         "If-statements are not allowed inside"
-    elseif expr.head == :call
+    elseif expr.head == :call && !(isa_dot_op(expr.args[1]))
         "Function calls are not allowed inside"
     elseif expr.head == :(=)
         "Non-broadcast assignments are not allowed inside"
@@ -35,6 +35,13 @@ function check_restrictions(expr)
             arg isa Symbol && continue
             check_restrictions(arg)
         end
+    elseif expr.head == :call && isa_dot_op(expr.args[1])
+        # Allows for LB.lazy_broadcasted(:(a .+ foo(b)))
+        # where foo(b) could be a getter to an array.
+        # This technically opens the door to incorrectness,
+        # as foo could change the pointer of `b` to something else
+        # however, this seems unlikely.
+    elseif expr.head == Symbol(".") # dot function call
     else
         @show dump(expr)
         @show dump(expr)
