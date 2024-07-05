@@ -3,9 +3,9 @@ function materialize_args(expr::Expr)
     if expr.args[1] == :(Base.materialize!)
         return (expr.args[2], expr.args[3])
     elseif expr.args[1] == :(Base.materialize)
-        return (expr.args[2], expr.args[2])
+        return (expr.args[2], expr.args[2]) # for type-stability, we always return a 2-tuple
     else
-        error("Uncaught edge case.")
+        error("Invalid expression given to materialize_args")
     end
 end
 

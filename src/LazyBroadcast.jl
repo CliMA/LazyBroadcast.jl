@@ -28,15 +28,13 @@ function transform(e::Expr)
     if e.head == :macrocall && e.args[1] == Symbol("@__dot__")
         se = code_lowered_single_expression(e)
         margs = materialize_args(se)
-        subexpr = :($(margs[2]))
-        subexpr
+        return :($(margs[2]))
     elseif e.head == :call && isa_dot_op(e.args[1])
         se = code_lowered_single_expression(e)
         margs = materialize_args(se)
-        subexpr = :($(margs[2]))
-        subexpr
+        return :($(margs[2]))
     else
-        Expr(transform(e.head), transform.(e.args)...)
+        return Expr(transform(e.head), transform.(e.args)...)
     end
 end
 
