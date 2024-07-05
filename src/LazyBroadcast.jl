@@ -51,4 +51,9 @@ macro lazy_broadcasted(expr)
     esc(_lazy_broadcasted(expr))
 end
 
+# Make shorter name available
+macro lazy(expr)
+    esc(_lazy_broadcasted(expr))
+end
+
 end # module LazyBroadcast
