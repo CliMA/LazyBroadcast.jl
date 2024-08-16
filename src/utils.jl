@@ -1,3 +1,5 @@
+wrap_bce(e) = :(Base.Broadcast.broadcasted(identity, $e))
+materialize_args(s::Symbol) = (wrap_bce(s), wrap_bce(s))
 function materialize_args(expr::Expr)
     @assert expr.head == :call
     if expr.args[1] == :(Base.materialize!)
@@ -5,7 +7,7 @@ function materialize_args(expr::Expr)
     elseif expr.args[1] == :(Base.materialize)
         return (expr.args[2], expr.args[2]) # for type-stability, we always return a 2-tuple
     else
-        error("Invalid expression given to materialize_args")
+        return (wrap_bce(expr), wrap_bce(expr))
     end
 end
 
@@ -42,8 +44,8 @@ function check_restrictions(expr)
         # as foo could change the pointer of `b` to something else
         # however, this seems unlikely.
     elseif expr.head == Symbol(".") # dot function call
+    elseif expr.head == Symbol(".=") # dot = expr
     else
-        @show dump(expr)
         @show dump(expr)
         error("Uncaught edge case")
     end
