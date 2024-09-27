@@ -29,7 +29,7 @@ function transform(e::Expr)
         se = code_lowered_single_expression(e)
         margs = materialize_args(se)
         return :($(margs[2]))
-    elseif e.head == :call && isa_dot_op(e.args[1])
+    elseif e.head == :call && isa_dot_op(e.args[1]) || e.head == :.=
         se = code_lowered_single_expression(e)
         margs = materialize_args(se)
         return :($(margs[2]))

@@ -7,9 +7,22 @@ substitute(s::Symbol, code) = s
 substitute(e::Expr, code) =
     Expr(substitute(e.head, code), substitute.(e.args, Ref(code))...)
 
-code_info(expr) = Base.Meta.lower(Main, expr).args[1]
+function code_info(expr::Expr)
+    lc = Base.Meta.lower(Main, expr)
+    if lc isa Symbol
+        return code_info(lc)
+    else
+        return code_info(lc.args[1])
+    end
+end
+code_info(s::Symbol) = s
+code_info(ci::Core.CodeInfo) = ci.code
 function code_lowered_single_expression(expr)
-    code = code_info(expr).code # vector
-    s = string(substitute(code[end], code))
-    return Base.Meta.parse(s)
+    code = code_info(expr) # vector
+    if code isa Symbol
+        return code
+    else
+        s = string(substitute(code[end], code))
+        return Base.Meta.parse(s)
+    end
 end
