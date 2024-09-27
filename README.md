@@ -9,7 +9,7 @@ For more information about Julia broadcasting, please see https://docs.julialang
 This utility is useful in a few situations:
 
  - Debugging broadcast machinery
- - Fusing operations in multiple broadcast expressions
+ - Fusing operations in multiple broadcast expressions (e.g., see [MultiBroadcastFusion.jl](https://github.com/CliMA/MultiBroadcastFusion.jl), which has lots of overlapping infrastructure)
  - Delaying execution of a broadcast expression
 
 
