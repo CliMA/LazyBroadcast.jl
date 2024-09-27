@@ -1,21 +1,66 @@
 # LazyBroadcast.jl
 
-A package for constructing Broadcasted objects from broadcast expressions.
+LazyBroadcast.jl provides a macro, `LazyBroadcast.@lazy_broadcasted` to
+transform a given Julia broadcast expression into a
+`Base.Broadcast.Broadcasted` object, without materializing it.
 
-Our test suite has a simple example demonstrating its use:
+For more information about Julia broadcasting, please see https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting.
+
+This utility is useful in a few situations:
+
+ - Debugging broadcast machinery
+ - Fusing operations in multiple broadcast expressions
+ - Delaying execution of a broadcast expression
+
+
+For not-in-place expressions, `@lazy_broadcasted` simply
+returns the broadcasted object, via `Base.Broadcast.broadcasted`
+of the right-hand-side:
 
 ```julia
 using Test
-import LazyBroadcast as LB
+import LazyBroadcast: @lazy_broadcasted
 
 a = rand(3,3)
 b = rand(3,3)
 
-bce = LB.lazy_broadcasted(:(@. a + b))
-bco = LB.@lazy_broadcasted @. a + b
-
 @testset "lazy_broadcasted" begin
-    @test bce == :(Base.broadcasted(+, a, b))
-    @test bco == Base.broadcasted(+, a, b)
+    bc = @lazy_broadcasted @. a + b # get the broadcasted object
+    @test Base.broadcasted(+, a, b) == @lazy_broadcasted @. a + b
+    @test Base.Broadcast.materialize(bc) == @. a + b # materialize the broadcasted object
 end
+```
+
+For in-place expressions, `@lazy_broadcasted` will strip out
+the left-hand-side, and still return return the broadcasted object,
+via `Base.Broadcast.broadcasted`, of the right-hand-side:
+
+```julia
+import LazyBroadcast: @lazy_broadcasted
+
+a = rand(3,3)
+b = rand(3,3)
+L = rand(3,3)
+
+bc = @lazy_broadcasted @. L = a + b # get the broadcasted object for
+@test Base.broadcasted(+, a, b) == @lazy_broadcasted @. L = a + b
+@test Base.Broadcast.materialize!(L, bc) == @. L = a + b # materialize the broadcasted object
+```
+
+To eagerly execute expressions, you may simply immediately
+materialize the returned broadcasted object:
+
+```julia
+import LazyBroadcast: @lazy_broadcasted
+
+a = rand(3,3)
+b = rand(3,3)
+L = rand(3,3)
+
+@. L = a + b
+
+# is exactly equivalent to
+
+bc = @lazy_broadcasted @. L = a + b
+Base.Broadcast.materialize!(L, bc)
 ```
