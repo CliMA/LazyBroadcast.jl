@@ -1,7 +1,7 @@
 name = "LazyBroadcast"
 uuid = "9dccce8e-a116-406d-9fcc-a88ed4f510c8"
 authors = ["CliMA Contributors <clima-software@caltech.edu>"]
-version = "0.1.5"
+version = "0.1.6"
 
 [compat]
 julia = "1.9"
