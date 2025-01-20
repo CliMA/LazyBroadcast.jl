@@ -1,66 +1,53 @@
 # LazyBroadcast.jl
 
-LazyBroadcast.jl provides a macro, `LazyBroadcast.@lazy_broadcasted` to
-transform a given Julia broadcast expression into a
+LazyBroadcast.jl provides a function, `lazy_broadcast`, and macro
+`@lazy_broadcast`, to transform a given Julia broadcast expression into a
 `Base.Broadcast.Broadcasted` object, without materializing it.
 
-For more information about Julia broadcasting, please see https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting.
+For more information about Julia broadcasting, please see
+https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting.
 
 This utility is useful in a few situations:
 
  - Debugging broadcast machinery
- - Fusing operations in multiple broadcast expressions (e.g., see [MultiBroadcastFusion.jl](https://github.com/CliMA/MultiBroadcastFusion.jl), which has lots of overlapping infrastructure)
+ - Fusing operations in multiple broadcast expressions (alternatively, see
+   [MultiBroadcastFusion.jl](https://github.com/CliMA/MultiBroadcastFusion.jl))
  - Delaying execution of a broadcast expression
 
-
-For not-in-place expressions, `@lazy_broadcasted` simply
-returns the broadcasted object, via `Base.Broadcast.broadcasted`
-of the right-hand-side:
+For not-in-place expressions, `lazy_broadcast`/`@lazy_broadcast` simply returns
+the instantiated broadcasted object, via `Base.Broadcast.instantiate
+(Base.Broadcast.broadcasted(x))`, of the right-hand-side:
 
 ```julia
 using Test
-import LazyBroadcast: @lazy_broadcasted
+import LazyBroadcast: @lazy_broadcast, lazy_broadcast
+import Base.Broadcast: instantiate, broadcasted, materialize
 
 a = rand(3,3)
 b = rand(3,3)
 
-@testset "lazy_broadcasted" begin
-    bc = @lazy_broadcasted @. a + b # get the broadcasted object
-    @test Base.broadcasted(+, a, b) == @lazy_broadcasted @. a + b
-    @test Base.Broadcast.materialize(bc) == @. a + b # materialize the broadcasted object
+@testset "lazy_broadcast" begin
+    bc = lazy_broadcast.(a .+ b) # get the broadcasted object
+    @test instantiate(broadcasted(+, a, b)) == bc
+    @test materialize(bc) == @. a + b # materialize the broadcasted object
+end
+
+@testset "@lazy_broadcast" begin
+    bc = @lazy_broadcast @. a + b # get the broadcasted object
+    @test instantiate(broadcasted(+, a, b)) == bc
+    @test materialize(bc) == @. a + b # materialize the broadcasted object
 end
 ```
 
-For in-place expressions, `@lazy_broadcasted` will strip out
-the left-hand-side, and still return return the broadcasted object,
-via `Base.Broadcast.broadcasted`, of the right-hand-side:
+`lazy_broadcast` does not support in-place expressions (as is supported in
+`MultiBroadcastFusion.jl`).
 
-```julia
-import LazyBroadcast: @lazy_broadcasted
+## Acknowledgement
 
-a = rand(3,3)
-b = rand(3,3)
-L = rand(3,3)
+The original implementation of `LazyBroadcast` involved a similar recipe to
+`MultiBroadcastFusion`, which has different yet justified needs for its
+implementation. Since then, [DontMaterialize.jl](https://github.com/MasonProtter/DontMaterialize.jl) was developed, which
+satisfied most needs by LazyBroadcast using a significantly more elegant approach, discussed [here](https://github.com/CliMA/LazyBroadcast.jl/issues/14). So, we've borrowed that
+implementation in order to be more consistent with `Base.Broadcast` semantics,
+and provide users with less surprising behavior. We've also kept `code_lowered_single_expression`, as this is one feature that `DontMaterialize.jl` does not offer (transforming broadcasted `Expr` to `Expr`).
 
-bc = @lazy_broadcasted @. L = a + b # get the broadcasted object for
-@test Base.broadcasted(+, a, b) == @lazy_broadcasted @. L = a + b
-@test Base.Broadcast.materialize!(L, bc) == @. L = a + b # materialize the broadcasted object
-```
-
-To eagerly execute expressions, you may simply immediately
-materialize the returned broadcasted object:
-
-```julia
-import LazyBroadcast: @lazy_broadcasted
-
-a = rand(3,3)
-b = rand(3,3)
-L = rand(3,3)
-
-@. L = a + b
-
-# is exactly equivalent to
-
-bc = @lazy_broadcasted @. L = a + b
-Base.Broadcast.materialize!(L, bc)
-```
