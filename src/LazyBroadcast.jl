@@ -34,14 +34,15 @@ BenchmarkTools.Trial: 10000 samples with 995 evaluations.
   31.4 ns      Histogram: log(frequency) by time       298 ns <
 
  Memory estimate: 288 bytes, allocs estimate: 4.
- ```
+```
 
- This is significantly slower than it needs to be because new arrays need to be
- allocated for `y` and `z`, and the data needs to be passed over multiple times
- because the broadcast kernels are not 'fused'.
+This is significantly slower than it needs to be because new arrays need to be
+allocated for `y` and `z`, and the data needs to be passed over multiple times
+because the broadcast kernels are not 'fused'.
 
 `DontMaterialize` gives a simple way to avoid these allocations and retain
 broadcast fusion:
+
 ```julia
 julia> function bar(x)
            y = lazy_broadcast.(x .+ x)
