@@ -8,8 +8,8 @@ We believe that software should be
  - granular
 
 LazyBroadcast.jl helps us achieve this by providing a function,
-`lazy_broadcast`. See our documentation for a more in-depth dive into how it
-works.
+`lazy_broadcast`. See our [documentation](https://clima.github.io/LazyBroadcast.jl/dev/)
+for a more in-depth dive into how it works.
 
 ## Acknowledgement
 
