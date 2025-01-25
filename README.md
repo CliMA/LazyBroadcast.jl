@@ -1,46 +1,15 @@
 # LazyBroadcast.jl
 
-LazyBroadcast.jl provides a function, `lazy_broadcast`, and macro
-`@lazy_broadcast`, to transform a given Julia broadcast expression into a
-`Base.Broadcast.Broadcasted` object, without materializing it.
+We believe that software should be
 
-For more information about Julia broadcasting, please see
-https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting.
+ - simple
+ - unit tested
+ - fast
+ - granular
 
-This utility is useful in a few situations:
-
- - Debugging broadcast machinery
- - Fusing operations in multiple broadcast expressions (alternatively, see
-   [MultiBroadcastFusion.jl](https://github.com/CliMA/MultiBroadcastFusion.jl))
- - Delaying execution of a broadcast expression
-
-For not-in-place expressions, `lazy_broadcast`/`@lazy_broadcast` simply returns
-the instantiated broadcasted object, via `Base.Broadcast.instantiate
-(Base.Broadcast.broadcasted(x))`, of the right-hand-side:
-
-```julia
-using Test
-import LazyBroadcast: @lazy_broadcast, lazy_broadcast
-import Base.Broadcast: instantiate, broadcasted, materialize
-
-a = rand(3,3)
-b = rand(3,3)
-
-@testset "lazy_broadcast" begin
-    bc = lazy_broadcast.(a .+ b) # get the broadcasted object
-    @test instantiate(broadcasted(+, a, b)) == bc
-    @test materialize(bc) == @. a + b # materialize the broadcasted object
-end
-
-@testset "@lazy_broadcast" begin
-    bc = @lazy_broadcast @. a + b # get the broadcasted object
-    @test instantiate(broadcasted(+, a, b)) == bc
-    @test materialize(bc) == @. a + b # materialize the broadcasted object
-end
-```
-
-`lazy_broadcast` does not support in-place expressions (as is supported in
-`MultiBroadcastFusion.jl`).
+LazyBroadcast.jl helps us achieve this by providing a function,
+`lazy_broadcast`. See our documentation for a more in-depth dive into how it
+works.
 
 ## Acknowledgement
 
