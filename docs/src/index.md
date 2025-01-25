@@ -15,4 +15,4 @@ LazyBroadcast.jl helps us achieve this by providing a function,
 This function can be used to transform a given Julia broadcast expression into
 broadcasted objects and without materializing them.
 
-To try this out, see our quick-start guide.
+To try this out, see our [quick-start](https://clima.github.io/LazyBroadcast.jl/dev/quick_start/).
