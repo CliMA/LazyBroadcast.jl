@@ -29,8 +29,10 @@ Documenter.makedocs(;
     pages = Any[
         "Home" => "index.md",
         "Quick start" => "quick_start.md",
-        "Motivation" => "motivation.md",
         "Broadcast background" => "broadcast_background.md",
+        "How `lazy_broadcast` works" => "how_it_works.md",
+        "Caveats" => "caveats.md",
+        "Motivation" => "motivation.md",
         "API" => "api.md",
         "References" => "references.md",
     ],

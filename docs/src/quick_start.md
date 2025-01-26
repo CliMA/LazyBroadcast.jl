@@ -2,8 +2,8 @@
 
 Suppose we want to sum a vector, which is the result of multiple broadcast
 expressions: `y = x .+ x`, `z = 2 .* y`, and, finally, `sum(z)`. Let's write
-this in a function, `foo`, and compare the result of using `lazy_broadcast` to
-compute the intermediate values.
+this in a function, `foo`, and compare the result of using [`lazy_broadcast`]
+(@ref LazyBroadcast.lazy_broadcast) to compute the intermediate values.
 
 ```@example
 using Base.Broadcast: materialize
@@ -16,7 +16,9 @@ function foo(x)
    sum(z)
 end;
 
-@benchmark foo(v) setup=(v=rand(10))
+trial = @benchmark foo(v) setup=(v=rand(10))
+show(stdout, MIME("text/plain"), trial)
+println()
 
 function bar(x)
    y = lazy_broadcast.(x .+ x)
@@ -24,11 +26,12 @@ function bar(x)
    sum(z)
 end;
 
-@benchmark bar(v) setup=(v=rand(10))
-bc = lazy_broadcast.(2 .* [1,2,3])
-materialize(bc)
+trial = @benchmark bar(v) setup=(v=rand(10))
+show(stdout, MIME("text/plain"), trial)
+println()
 ```
 
 On my computer, the benchmarks take `43.433 ns` and `5.917 ns`, respectively.
-So, using LazyBroadcast results in a 7x speedup. This is achieved by avoiding
-temporary array allocations.
+So, using LazyBroadcast results in a 7x speedup. This demonstrates the power of
+using [`lazy_broadcast`](@ref LazyBroadcast.lazy_broadcast), which allows us to avoid allocating temporary arrays.
+
