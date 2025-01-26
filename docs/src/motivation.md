@@ -1,6 +1,7 @@
 # Motivation
 
-This utility is useful in a few situations:
+[`lazy_broadcast`](@ref LazyBroadcast.lazy_broadcast) is useful in a few
+situations:
 
  - Debugging broadcast machinery
 
@@ -8,10 +9,6 @@ This utility is useful in a few situations:
    [MultiBroadcastFusion.jl](https://github.com/CliMA/MultiBroadcastFusion.jl))
 
  - Delaying execution of a broadcast expression
-
-For not-in-place expressions, `lazy_broadcast` simply returns
-the instantiated broadcasted object, via `Base.Broadcast.instantiate
-(Base.Broadcast.broadcasted(x))`, of the right-hand-side:
 
 ## Debuggin broadcast machinery
 
