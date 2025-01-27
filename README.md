@@ -7,10 +7,9 @@ We believe that software should be
  - fast
  - granular
 
-LazyBroadcast.jl helps us achieve via [`lazy_broadcast`]
-(@ref LazyBroadcast.lazy_broadcast). See our [documentation]
-(https://clima.github.io/LazyBroadcast.jl/dev/) for a more in-depth dive into
-how it works.
+LazyBroadcast.jl helps us achieve via [`lazy_broadcast`](@ref LazyBroadcast.lazy_broadcast).
+See our [documentation](https://clima.github.io/LazyBroadcast.jl/dev/) for a
+more in-depth dive into how it works.
 
 ## Acknowledgement
 
