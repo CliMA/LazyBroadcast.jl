@@ -1,7 +1,10 @@
-# How `lazy_broadcast` works
+# Internals of how `lazy_broadcast` works
 
-It's actually very simple, and the entire package can be written in a few lines
-of code:
+We recommend reading reading [Julia Base Broadcast Background](@ref) before this
+section.
+
+The entire implementation of LazyBroadcast is very short, and can be written in
+a few lines of code:
 
 ```julia
 using Base.Broadcast: broadcasted, materialize, instantiate
@@ -13,10 +16,7 @@ Base.Broadcast.broadcasted(::typeof(lazy_broadcast), x) = LazyBroadcasted(x)
 Base.materialize(x::LazyBroadcasted) = instantiate(x.value)
 ```
 
-That's it. If you have not read the section on [Julia Base Broadcast Background]
-(@ref), then you may want to read that, first. Assuming you've read that
-section, the idea is simple, and we can outline what happens in a few steps.
-Let's first consider a simple example:
+Let's break down how this works with a simple example:
 
 ```julia
 x = [1, 2]
