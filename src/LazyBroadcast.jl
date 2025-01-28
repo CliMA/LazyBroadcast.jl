@@ -17,23 +17,17 @@ broadcast expression into multiple steps, and then sum up all of the
 components:
 
 ```julia
+julia> using BenchmarkTools
+
 julia> function foo(x)
            y = x .+ x
            z = 2 .* y
            sum(z)
        end;
 
-julia> @benchmark foo(v) setup=(v=rand(10))
-BenchmarkTools.Trial: 10000 samples with 995 evaluations.
- Range (min … max):  31.405 ns …  4.801 μs  ┊ GC (min … max):  0.00% … 98.56%
- Time  (median):     34.809 ns              ┊ GC (median):     0.00%
- Time  (mean ± σ):   45.504 ns ± 93.354 ns  ┊ GC (mean ± σ):  20.30% ± 11.70%
-
-  █▅▃▂                                                        ▁
-  █████▆▅▅▅▅▅▅▁▄▅▅▇▅▃▁▁▁▄▅▅▁▁▁▁▁▃▁▁▁▁▁▄▁▅▁▁▁▁▁▃▅▆▅▄▅▄▁▄▄▆▆▅▄▅ █
-  31.4 ns      Histogram: log(frequency) by time       298 ns <
-
- Memory estimate: 288 bytes, allocs estimate: 4.
+julia> @btime foo(v) setup=(v=rand(10))
+  43.096 ns (2 allocations: 288 bytes)
+20.37839658590829
 ```
 
 This is significantly slower than it needs to be because new arrays need to be
@@ -44,23 +38,17 @@ because the broadcast kernels are not 'fused'.
 broadcast fusion:
 
 ```julia
-julia> function bar(x)
+julia> using BenchmarkTools, LazyBroadcast
+
+julia> function foo_lazy(x)
            y = lazy_broadcast.(x .+ x)
            z = lazy_broadcast.(2 .* y)
            sum(z)
        end;
 
-julia> @benchmark bar(v) setup=(v=rand(10))
-BenchmarkTools.Trial: 10000 samples with 1000 evaluations.
- Range (min … max):  5.931 ns … 59.562 ns  ┊ GC (min … max): 0.00% … 0.00%
- Time  (median):     6.252 ns              ┊ GC (median):    0.00%
- Time  (mean ± σ):   6.435 ns ±  2.767 ns  ┊ GC (mean ± σ):  0.00% ± 0.00%
-
-        ▁█
-  ▃▂▃▃▄▇██▂▂▂▂▂▂▂▂▂▂▂▂▂▁▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▂▂▁▂▂▂▂▂▂▂▂▂▂ ▂
-  5.93 ns        Histogram: frequency by time        8.75 ns <
-
- Memory estimate: 0 bytes, allocs estimate: 0.
+julia> @btime foo_lazy(v) setup=(v=rand(10))
+  5.958 ns (0 allocations: 0 bytes)
+23.002907370961225
 ```
 
 the result of a `lazy_broadcast` call can be collected into an array with the
