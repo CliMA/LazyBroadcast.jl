@@ -74,7 +74,6 @@ end
 Base.Broadcast.broadcasted(::typeof(lazy_broadcast), x) = LazyBroadcasted(x)
 Base.materialize(x::LazyBroadcasted) = instantiate(x.value)
 
-import Base.Broadcast: instantiate, broadcasted
 macro lazy_broadcast(expr)
     return quote
         LazyBroadcast.lazy_broadcast.($(esc(expr)))

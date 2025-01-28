@@ -2,8 +2,9 @@
 
 Here, we'll provide our own brief background of Julia Base's broadcast
 machinery. Please see the official Julia [broadcasting documentation]
-(https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting), for more
-information.
+(https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting) and the
+[2017 blog post](https://julialang.org/blog/2017/01/moredots/) by Steven G.
+Johnson, for more information.
 
 ## Introduction
 
@@ -131,8 +132,10 @@ Base.Meta.@lower @. a+=1
 
 !!! note
     
-    The result of `Base.Meta.@lower` is an intermediate representation (IR) of
-    the given expression.
+    `Base.Meta.@lower` returns an intermediate representation (IR) of the given
+    expression, which is printed as a sequence of operations where results of
+    functions are assigned to symbols on the left-hand-side and later
+    referenced.
 
 The responsibility of `broadcasted`, here, is to return `Broadcasted` objects.
 This function allows users to overload `broadcasted` to return special types of
