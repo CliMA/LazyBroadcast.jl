@@ -13,11 +13,10 @@ Base.Broadcast.broadcasted(::typeof(lazy_broadcast), x) = LazyBroadcasted(x)
 Base.materialize(x::LazyBroadcasted) = instantiate(x.value)
 ```
 
-That's it. If you have not read the section on [broadcast background]
-(https://clima.github.io/LazyBroadcast.jl/dev/broadcast_background/), then you
-may want to read that, first. Assuming you've read that section, the idea is
-simple, and we can outline what happens in a few steps. Let's first consider a
-simple example:
+That's it. If you have not read the section on [Julia Base Broadcast Background]
+(@ref), then you may want to read that, first. Assuming you've read that
+section, the idea is simple, and we can outline what happens in a few steps.
+Let's first consider a simple example:
 
 ```julia
 x = [1, 2]
