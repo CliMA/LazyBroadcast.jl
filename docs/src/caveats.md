@@ -2,7 +2,11 @@
 
 There are some caveats of working with lazy objects: the construction of
 broadcasted objects and their execution can become separated, requiring more
-thought. For example:
+thought.
+
+## Delayed execution can be confusing
+
+For example:
 
 ```@example caveats
 using LazyBroadcast: lazy_broadcast
@@ -26,3 +30,9 @@ materializing `c` will yield results for whatever values that `a` and `b`
 contain at that instant. This might be surprising at first, but it's also very
 powerful. We can think of `c` as an _expression_, that holds true for whatever
 values we put into `a` and `b`.
+
+## Compilation time
+
+`Broadcasted` objects are stack-allocated, and therefore increasingly large
+broadcast expressions may result in increased compilation times.
+
