@@ -39,4 +39,5 @@ So, using LazyBroadcast results in a 7x speedup. This demonstrates the power of
 using [`lazy_broadcast`](@ref LazyBroadcast.lazy_broadcast), which has allowed
 us to avoid temporary allocations.
 
-If you're interested, check out the [How `lazy_broadcast` works](@ref) section.
+If you're interested in the implementation, check out the
+[Internals of how `lazy_broadcast` works](@ref) section.
