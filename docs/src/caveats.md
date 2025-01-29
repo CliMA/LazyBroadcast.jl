@@ -1,8 +1,9 @@
 # Caveats
 
-There are some caveats of working with lazy objects: the construction of
+There are some caveats of working with lazy objects. First, the construction of
 broadcasted objects and their execution can become separated, requiring more
-thought.
+thought and introducing harder-to-debug problems. Second, creating complex
+`Broadcasted` objects can increase compile time.
 
 ## Delayed execution can be confusing
 
