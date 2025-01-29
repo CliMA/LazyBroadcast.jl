@@ -52,7 +52,7 @@ ns` and `5.917 ns`, respectively, a 7x speedup!).
 
 What happened here is that `y` and `z` are no longer `Array`s, but `Broadcasted`
 objects, which are unevaluated representations of expressions. Then, the
-function `sum` efficiently combines and evaluate them, removing the need for any
+function `sum` implementation efficiently evaluates the `Broadcasted` expression, removing the need for any
 intermediate allocations.
 
 Now that you know what to expect from [`lazy_broadcast`](@ref
