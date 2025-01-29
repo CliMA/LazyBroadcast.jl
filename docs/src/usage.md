@@ -1,7 +1,8 @@
 # Usage
 
-If you've not read the [Julia Base Broadcast Background](@ref) section, that may
-be helpful in understanding concepts, types, and functions discussed here.
+`LazyBroadcast.jl` provides a way to defer the execution of a broadcasted
+expression. As we show in the [Quick start](@ref), this can signficantly improve
+performance of Julia code.
 
 The basic usage of this package involves wrapping intermediate broadcast
 expressions with dot-calls to `lazy_broadcast`, and then working with those
@@ -21,6 +22,12 @@ that you can do with them:
  - Call functions that support `Broadcasted` objects
 
 Let's try each of these.
+
+!!! note
+
+    If you've not read the [Julia Base Broadcast Background](@ref) section, that may
+    be helpful in understanding concepts, types, and functions discussed here.
+
 
 ## Materialize
 
@@ -42,7 +49,8 @@ We can take this to a step further: after we create `y_lazy`, we can manipulate 
 
 ## Combine with other broadcast expressions
 
-This is as simple as combining expressions with more dot operations:
+Once we have `Broadcasted` expressions, we can combine them with more dot
+operations:
 
 ```@example usage
 z_lazy = lazy_broadcast.(x .* x);
@@ -58,7 +66,9 @@ so_lazy = lazy_broadcast.(y_lazy .+ z_lazy)
 ```
 Now, we have a `Broadcasted` object again.
 
-Note that manipulating `Broadcasted` objects is very cheap, so `LazyBroadcast` allows you to construct a complex expression that can be evaluated more efficiently later.
+Note that manipulating `Broadcasted` objects is very cheap, so `LazyBroadcast`
+allows you to construct a complex expression that can be evaluated more
+efficiently later.
 
 ## Call functions that support `Broadcasted`
 
@@ -69,9 +79,11 @@ For example, `sum`:
 sum(so_lazy)
 ```
 As we can see, this is equivalent to first evaluating the `Broadcasted` expression and then calling `sum` on the result.
-Another common one is `Base.copyto!`, which can be called naturally through
-broadcast expressions (`@.` -> `materialize!` -> `copyto!`, see
-[Julia Base Broadcast Background](@ref) for details):
+
+Another common function that directly supports `Broadcasted` object is
+`Base.copyto!`, which can be called naturally through broadcast expressions
+(`@.` -> `materialize!` -> `copyto!`, see [Julia Base Broadcast
+Background](@ref) for details):
 
 ```@example usage
 my_array = similar(x)

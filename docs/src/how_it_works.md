@@ -1,6 +1,6 @@
 # Internals of how `lazy_broadcast` works
 
-We recommend reading reading [Julia Base Broadcast Background](@ref) before this
+We recommend reading [Julia Base Broadcast Background](@ref) before this
 section.
 
 The entire implementation of LazyBroadcast is very short, and can be written in
