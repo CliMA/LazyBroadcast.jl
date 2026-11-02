@@ -34,7 +34,7 @@ This is significantly slower than it needs to be because new arrays need to be
 allocated for `y` and `z`, and the data needs to be passed over multiple times
 because the broadcast kernels are not 'fused'.
 
-`DontMaterialize` gives a simple way to avoid these allocations and retain
+`lazy_broadcast` gives a simple way to avoid these allocations and retain
 broadcast fusion:
 
 ```julia
@@ -87,5 +87,10 @@ macro lazy(expr)
 end
 
 include("code_lowered_single_expression.jl")
+include("null_broadcasted.jl")
+include(joinpath("fusion", "utils.jl"))
+include(joinpath("fusion", "macros.jl"))
+include(joinpath("fusion", "fused_direct.jl"))
+include(joinpath("fusion", "fused_assemble.jl"))
 
 end # module LazyBroadcast

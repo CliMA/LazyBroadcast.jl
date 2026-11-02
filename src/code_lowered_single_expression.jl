@@ -3,6 +3,9 @@ substitute(x, code) = x
 substitute(x::Core.SSAValue, code) = substitute(code[x.id], code)
 substitute(x::Core.ReturnNode, code) = substitute(code[x.val.id], code)
 substitute(s::Symbol, code) = s
+# Newer Julia versions lower global names to `Main.name`. Drop the `Main.` so the
+# result refers to the caller's variables, as it does on older versions.
+substitute(x::GlobalRef, code) = x.mod === Main ? x.name : x
 # Expression: recursively substitute for Expr
 substitute(e::Expr, code) =
     Expr(substitute(e.head, code), substitute.(e.args, Ref(code))...)

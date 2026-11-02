@@ -30,6 +30,8 @@ Documenter.makedocs(;
         "Home" => "index.md",
         "Quick start" => "quick_start.md",
         "Usage" => "usage.md",
+        "NullBroadcasted" => "null_broadcasted.md",
+        "Fusing multiple broadcasts" => "fusion.md",
         "Broadcast background" => "broadcast_background.md",
         "Internals of how `lazy_broadcast` works" => "how_it_works.md",
         "Caveats" => "caveats.md",
