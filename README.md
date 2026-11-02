@@ -24,5 +24,10 @@ expressions. This can be used to avoid temporary allocations, fuse operations,
 and enable a even more functional-programming approaches to Julia packages.
 
 This is achieved via [`lazy_broadcast`](https://clima.github.io/LazyBroadcast.jl/dev/api/#LazyBroadcast.lazy_broadcast).
+
+LazyBroadcast.jl also provides `NullBroadcasted`, formerly in
+[NullBroadcasts.jl](https://github.com/CliMA/NullBroadcasts.jl), and the
+macros for fusing several broadcast expressions into one loop, formerly in
+[MultiBroadcastFusion.jl](https://github.com/CliMA/MultiBroadcastFusion.jl).
 See our [documentation](https://clima.github.io/LazyBroadcast.jl/dev/) for more
 information.
